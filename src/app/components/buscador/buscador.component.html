@@ -1,0 +1,44 @@
+<!-- Barra de búsqueda -->
+<div class="buscador">
+  <input
+    type="text"
+    placeholder="🔍 Busca libros..."
+    [(ngModel)]="termino"
+    (input)="onInputChange(termino)"
+    aria-label="Buscar libros"
+  />
+</div>
+
+<!-- Grid de resultados -->
+<div class="grid-libros">
+  <div
+    class="card libro-card"
+    *ngFor="let libro of libros; let i = index"
+    (click)="abrirChat(libro)"
+  >
+    <img
+      [src]="libro.volumeInfo?.imageLinks?.thumbnail || 'https://via.placeholder.com/128x200?text=No+Image'"
+      [alt]="libro.volumeInfo?.title || 'Libro sin título'"
+      class="portada"
+    />
+    <div class="info">
+      <h3 class="titulo">{{ libro.volumeInfo?.title }}</h3>
+    </div>
+  </div>
+</div>
+
+<!-- Indicador de carga -->
+<div *ngIf="cargando" class="loader">📚 Buscando libros...</div>
+
+<!-- Mensaje si no hay resultados -->
+<div *ngIf="!cargando && libros.length === 0" class="mensaje-vacio">
+  ❌ No se encontraron libros con ese término.
+</div>
+
+<!-- Componente del chat con IA (solo si está abierto) -->
+<app-chat-ia
+  *ngIf="chatAbierto"
+  [libro]="libroSeleccionado"
+  [visible]="chatAbierto"
+  [cerrarCallback]="cerrarChat"
+></app-chat-ia>
