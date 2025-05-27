@@ -1,4 +1,4 @@
-<!-- Barra de búsqueda -->
+<!-- Barra de búsqueda y categoría -->
 <div class="buscador">
   <input
     type="text"
@@ -7,6 +7,18 @@
     (input)="onInputChange(termino)"
     aria-label="Buscar libros"
   />
+
+  <!-- Filtro de categoría -->
+  <select [(ngModel)]="categoriaSeleccionada" (change)="onCategoriaChange(categoriaSeleccionada)">
+    <option value="">📂 Todas las categorías</option>
+    <option value="Fiction">📖 Ficción</option>
+    <option value="Science">🔬 Ciencia</option>
+    <option value="History">📜 Historia</option>
+    <option value="Biography">🧑‍🏫 Biografía</option>
+    <option value="Art">🎨 Arte</option>
+    <option value="Technology">💻 Tecnología</option>
+    <!-- Puedes agregar más categorías -->
+  </select>
 </div>
 
 <!-- Grid de resultados -->
@@ -32,13 +44,5 @@
 
 <!-- Mensaje si no hay resultados -->
 <div *ngIf="!cargando && libros.length === 0" class="mensaje-vacio">
-  ❌ No se encontraron libros con ese término.
+  ❌ No se encontraron libros con ese término y categoría.
 </div>
-
-<!-- Componente del chat con IA (solo si está abierto) -->
-<app-chat-ia
-  *ngIf="chatAbierto"
-  [libro]="libroSeleccionado"
-  [visible]="chatAbierto"
-  [cerrarCallback]="cerrarChat"
-></app-chat-ia>

@@ -4,17 +4,17 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { ChatIaComponent } from '../chat-ia/chat-ia.component';
 
 @Component({
   selector: 'app-buscador',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule, ChatIaComponent],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './buscador.component.html',
   styleUrls: ['./buscador.component.css']
 })
 export class BuscadorComponent implements OnDestroy {
   termino: string = '';
+  categoriaSeleccionada: string = '';
   libros: any[] = [];
   cargando: boolean = false;
 
@@ -45,6 +45,12 @@ export class BuscadorComponent implements OnDestroy {
     this.busqueda$.next(valor);
   }
 
+  onCategoriaChange(categoria: string) {
+    this.categoriaSeleccionada = categoria;
+    this.resetBusqueda();
+    this.cargarTodosLibros();
+  }
+
   resetBusqueda() {
     this.libros = [];
     this.startIndex = 0;
@@ -52,7 +58,7 @@ export class BuscadorComponent implements OnDestroy {
   }
 
   cargarTodosLibros() {
-    if (!this.termino.trim()) {
+    if (!this.termino.trim() && !this.categoriaSeleccionada) {
       this.libros = [];
       return;
     }
@@ -62,7 +68,16 @@ export class BuscadorComponent implements OnDestroy {
   }
 
   cargarPagina(start: number) {
-    const query = encodeURIComponent(this.termino);
+    let query = '';
+
+    if (this.termino.trim()) {
+      query += encodeURIComponent(this.termino.trim());
+    }
+
+    if (this.categoriaSeleccionada) {
+      query += `+subject:${encodeURIComponent(this.categoriaSeleccionada)}`;
+    }
+
     const url = `https://www.googleapis.com/books/v1/volumes?q=${query}&startIndex=${start}&maxResults=${this.maxResults}`;
 
     this.http.get<any>(url).subscribe({
