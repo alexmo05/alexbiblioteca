@@ -1,4 +1,4 @@
-<!-- Barra de búsqueda y categoría -->
+<!-- Barra de búsqueda, categoría e idioma -->
 <div class="buscador">
   <input
     type="text"
@@ -8,7 +8,6 @@
     aria-label="Buscar libros"
   />
 
-  <!-- Filtro de categoría -->
   <select [(ngModel)]="categoriaSeleccionada" (change)="onCategoriaChange(categoriaSeleccionada)">
     <option value="">📂 Todas las categorías</option>
     <option value="Fiction">📖 Ficción</option>
@@ -17,7 +16,16 @@
     <option value="Biography">🧑‍🏫 Biografía</option>
     <option value="Art">🎨 Arte</option>
     <option value="Technology">💻 Tecnología</option>
-    <!-- Puedes agregar más categorías -->
+  </select>
+
+  <select [(ngModel)]="idiomaSeleccionado" (change)="onIdiomaChange(idiomaSeleccionado)">
+    <option value="">🌐 Todos los idiomas</option>
+    <option value="es">🇪🇸 Español</option>
+    <option value="en">🇺🇸 Inglés</option>
+    <option value="fr">🇫🇷 Francés</option>
+    <option value="de">🇩🇪 Alemán</option>
+    <option value="it">🇮🇹 Italiano</option>
+    <option value="pt">🇵🇹 Portugués</option>
   </select>
 </div>
 
@@ -25,8 +33,8 @@
 <div class="grid-libros">
   <div
     class="card libro-card"
-    *ngFor="let libro of libros; let i = index"
-    (click)="abrirChat(libro)"
+    *ngFor="let libro of libros"
+    (click)="seleccionarLibro(libro)"
   >
     <img
       [src]="libro.volumeInfo?.imageLinks?.thumbnail || 'https://via.placeholder.com/128x200?text=No+Image'"
@@ -35,6 +43,13 @@
     />
     <div class="info">
       <h3 class="titulo">{{ libro.volumeInfo?.title }}</h3>
+      <button
+        (click)="agregarAFavoritos(libro); $event.stopPropagation()"
+        class="btn-fav"
+        type="button"
+      >
+        ⭐ Añadir a favoritos
+      </button>
     </div>
   </div>
 </div>
@@ -44,5 +59,104 @@
 
 <!-- Mensaje si no hay resultados -->
 <div *ngIf="!cargando && libros.length === 0" class="mensaje-vacio">
-  ❌ No se encontraron libros con ese término y categoría.
+  ❌ No se encontraron libros con ese término, categoría o idioma.
+</div>
+
+<!-- 🔻 INICIO SECCIÓN FAVORITOS 🔻 -->
+<div id="seccion-favoritos" class="favoritos">
+  <h2>
+    ⭐ Favoritos
+    <button
+      class="btn-subir"
+      (click)="subirArriba()"
+      aria-label="Subir arriba"
+      type="button"
+    >
+      ⬆️
+    </button>
+  </h2>
+
+  <div *ngIf="favoritos.length === 0">
+    <p>No tienes libros guardados.</p>
+  </div>
+
+  <div class="grid-libros">
+    <div
+      class="card libro-card"
+      *ngFor="let fav of favoritos"
+      (click)="seleccionarLibro(fav)"
+    >
+      <img
+        [src]="fav.volumeInfo?.imageLinks?.thumbnail || 'https://via.placeholder.com/128x200?text=No+Image'"
+        [alt]="fav.volumeInfo?.title || 'Libro sin título'"
+        class="portada"
+      />
+      <div class="info">
+        <h3 class="titulo">{{ fav.volumeInfo?.title }}</h3>
+        <button
+          (click)="eliminarFavorito(fav.id); $event.stopPropagation()"
+          class="btn-remove"
+          type="button"
+        >
+          ❌ Quitar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección de detalles del libro -->
+  <div
+    id="detalles-libro"
+    class="detalles-libro"
+    *ngIf="libroSeleccionado"
+  >
+    <h2>
+      📚 Detalles del libro
+      <button
+        class="btn-subir"
+        (click)="subirArriba()"
+        aria-label="Subir arriba"
+        type="button"
+      >
+        ⬆️
+      </button>
+    </h2>
+
+    <div class="detalles-contenido">
+      <img
+        [src]="libroSeleccionado.volumeInfo?.imageLinks?.thumbnail || 'https://via.placeholder.com/128x200?text=No+Image'"
+        [alt]="libroSeleccionado.volumeInfo?.title || 'Libro sin título'"
+        class="portada-detalle"
+      />
+
+      <div class="info-detalle">
+        <h3>{{ libroSeleccionado.volumeInfo?.title }}</h3>
+        <p><strong>Autor(es):</strong> {{ libroSeleccionado.volumeInfo?.authors?.join(', ') || 'No disponible' }}</p>
+        <p><strong>Editorial:</strong> {{ libroSeleccionado.volumeInfo?.publisher || 'No disponible' }}</p>
+        <p><strong>Publicado:</strong> {{ libroSeleccionado.volumeInfo?.publishedDate || 'No disponible' }}</p>
+        <p><strong>Descripción:</strong> <span [innerHTML]="libroSeleccionado.volumeInfo?.description || 'No disponible'"></span></p>
+        <p><strong>Páginas:</strong> {{ libroSeleccionado.volumeInfo?.pageCount || 'No disponible' }}</p>
+        <p><strong>Idioma:</strong> {{ libroSeleccionado.volumeInfo?.language || 'No disponible' }}</p>
+        <p><strong>Rating:</strong> {{ libroSeleccionado.volumeInfo?.averageRating || 'No disponible' }}</p>
+        <a [href]="libroSeleccionado.volumeInfo?.infoLink" target="_blank" rel="noopener noreferrer">Más info en Google Books</a>
+
+        <!-- Botón para añadir o quitar favorito en detalles -->
+<button
+  *ngIf="!esFavorito(libroSeleccionado.id)"
+  (click)="agregarAFavoritos(libroSeleccionado)"
+  class="btn-fav"
+  type="button"
+>
+  ⭐ Añadir a favoritos
+</button>
+
+<button
+  *ngIf="esFavorito(libroSeleccionado.id)"
+  (click)="eliminarFavorito(libroSeleccionado.id)"
+  class="btn-remove"
+  type="button"
+>
+  ❌ Quitar de favoritos
+</button>
+
 </div>
