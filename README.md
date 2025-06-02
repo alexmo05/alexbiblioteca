@@ -1,59 +1,67 @@
-# Alexbiblioteca
+# 📚 Aplicación Buscador de Libros (Angular)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.11.
+Aplicación web desarrollada con **Angular** que permite buscar libros usando la API de Google Books, filtrarlos por categoría e idioma, ver sus detalles, marcarlos como favoritos y almacenarlos en `localStorage`.
 
-## Development server
+---
 
-To start a local development server, run:
+## 🌐 Enlaces
 
-```bash
-ng serve
-```
+- **🔗 Despliegue del proyecto**: [https://alexbiblioteca.vercel.app/](https://alexbiblioteca.vercel.app/)  
+- **🎨 Diseño en Figma**: [https://www.figma.com/file/ejemplo](https://www.figma.com/design/Bj8UnXpU4z7ADThZGlKvul/Untitled?node-id=1-369&t=Wr4rjmHP47m0c0fX-1)
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## ⚙️ Funcionalidades principales
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### 🔍 Búsqueda de libros
+- Entrada en vivo con `debounce` para optimizar peticiones.
+- Los resultados se cargan de forma paginada hasta completar todos los disponibles.
 
-```bash
-ng generate component component-name
-```
+### 🗂 Filtros
+- **Categoría**: permite filtrar por temas como ficción, historia, ciencia, etc.
+- **Idioma**: permite mostrar solo libros en el idioma seleccionado.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### 📖 Visualización de resultados
+- Cuadrícula responsive con las portadas de los libros.
+- Cada tarjeta muestra el título y un botón para agregar a favoritos.
 
-```bash
-ng generate --help
-```
+### 💾 Favoritos
+- Los libros se pueden marcar como favoritos.
+- Se guardan en `localStorage` para persistencia entre sesiones.
+- Se pueden eliminar individualmente.
 
-## Building
+### 📘 Detalles de libro
+- Al hacer clic en una tarjeta se muestra información detallada:
+  - Título
+  - Autores
+  - Editorial
+  - Fecha de publicación
+  - Descripción
+  - Número de páginas
+  - Idioma
+  - Enlace a Google Books
+  - Botón para añadir o quitar de favoritos
 
-To build the project run:
+### 🆙 Scroll suave
+- Al seleccionar un libro, se hace scroll suave a la sección de detalles.
+- Botón para volver arriba en secciones largas (Favoritos y Detalles).
 
-```bash
-ng build
-```
+---
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## 🧠 Tecnologías usadas
 
-## Running unit tests
+- **Angular (standalone components)**
+- **TypeScript**
+- **RxJS** (`Subject`, `debounceTime`, `distinctUntilChanged`)
+- **Google Books API**
+- **LocalStorage**
+- **HTML + CSS (estilos propios y adaptados)**
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+---
 
-```bash
-ng test
-```
+## 📝 Cómo usar el proyecto
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/alexmo05/alexbiblioteca
+   cd tu-repo
